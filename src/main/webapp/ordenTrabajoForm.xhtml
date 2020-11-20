@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<head>
+	<title>Registrar Orden de Trabajo</title>
+</head>
+<body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+			<h:form id="frmOrden">
+				<p:panel id="form" header="#{formOrden.orden.idOtrabajo == 0 ? 'Registrar Orden de Trabajo' : 'Actualizar Orden de Trabajo'}">
+					<p:messages id="msgs"/>
+					
+					<!-- Datos de la Orden -->
+					<p:panelGrid id="grid1" columns="2" columnClasses="ui-g-12 ui-md-4,ui-g-12 ui-md-8" layout="grid"
+						         styleClass="ui-fluid" style="width:100%; margin-top:20px">
+						<f:facet name="header">Datos de la Orden de Trabajo</f:facet>
+						
+						<c:if test="#{formOrden.orden.idOtrabajo != 0}">
+							<h:outputLabel value="Nro. O.T:" />
+							<h:outputText value="#{formOrden.orden.idOtrabajo}"/>
+						</c:if>
+						
+						<h:outputLabel value="Fecha de Inicio:" />
+						<p:calendar value="#{formOrden.orden.fechaInicio}" pattern="dd/MM/yyyy" showOn="button"/>
+						
+						<h:outputLabel value="Fecha Fin:" />
+						<p:calendar value="#{formOrden.orden.fechaTermino}" pattern="dd/MM/yyyy" showOn="button"/>
+						
+						<h:outputLabel value="Comentarios" />
+						<h:panelGroup>
+							<p:inputTextarea value="#{formOrden.orden.comentarios}" rows="5" cols="30" counter="counter" maxlength="50"       
+					    		counterTemplate="{0} caracteres restantes." autoResize="false"/>
+					    	<p:spacer width="4"/>
+					    	<h:outputText id="counter" />
+						</h:panelGroup>
+
+						<h:outputLabel value="Nro. S.S:" />
+						<h:outputText value="#{formOrden.orden.tbSolicitudIdSolicitud}"/>
+						
+						<h:outputLabel value="Usuario:" />
+						<h:outputText value="#{formOrden.orden.usuario}"/>
+					</p:panelGrid>
+					
+					<!-- Datos de la solicitud -->
+					<p:panelGrid columns="1" layout="grid" style="width:100%; margin-top:20px">
+						<f:facet name="header">  
+					        Buscar S.S Comercial 
+					    </f:facet> 
+					    
+					    <h:panelGroup>
+					    	<h:outputLabel value="Nro. S.S:" />
+			            	<p:spacer width="10" />
+		            		<p:inputText id="txtBuscSolic" value="#{formOrden.buscSolic}" styleClass="inputresponsive"/>
+		            		<p:spacer width="10" />
+		            		<p:commandButton id="cmdObtenerSol" action="#{formOrden.obtenerSolicitud}" update="form" icon="pi pi-plus"/>
+		            		<p:spacer width="2" />
+		            		<p:commandButton id="cmdBuscarSol" action="#{formOrden.buscarSolicitud}" update=":frmOrden:pnlBuscarSolicitud" icon="pi pi-search" oncomplete="PF('BuscarSolicitudDialog').show()"/>
+					    </h:panelGroup>
+			            	
+	            		<h:panelGroup rendered="#{formOrden.mostrar}">
+		            		<p:panelGrid id="pnlDetalleSolicitud" columns="4" columnClasses="ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3" layout="grid" 
+		            		            style="width:100%">
+		            			<h:outputLabel value="Nro. S.S" /> 
+		            			<h:outputLabel value="#{formOrden.solicitud.idSolicitud}" />
+		            			
+		            			<h:outputLabel value="Fecha" /> 
+		            			<h:outputLabel value="#{formOrden.solicitud.fecha}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputLabel>
+								
+		            			<h:outputLabel value="Representante" /> 
+						        <h:outputLabel value="#{formOrden.solicitud.representante}" />
+						        
+						        <h:outputLabel value="Problema" />   
+						        <h:outputLabel value="#{formOrden.solicitud.desProblema}" />  
+							</p:panelGrid>
+	            		</h:panelGroup>
+					</p:panelGrid>
+				    
+				    <div class="ui-g">
+				    	<div class="ui-g-12 ui-md-12 ui-lg-6"><!-- style="padding: .5em 0 .5em 0" -->
+					    	<!-- Datos de los paquetes disponibles -->
+							<p:panelGrid columns="1" style="width:100%; margin-top:20px">
+								<f:facet name="header">  
+							    	Añadir Paquetes Disponibles  
+							    </f:facet> 
+							    
+							    <h:panelGroup>
+								    <h:outputLabel value="ID:" />
+								    <p:spacer width="10"/>
+				            		<p:inputText value="#{formOrden.buscPaq}" styleClass="inputresponsive"/>
+				            		<p:spacer width="10"/>
+				            		<p:commandButton id="cmdAgregarPaq" action="#{formOrden.obtenerPaquete}" update="form"  icon="pi pi-plus"/>
+				            		<p:spacer width="2" />
+				            		<p:commandButton id="cmdBuscarPaq" action="#{formOrden.listarPaquetes}" update=":frmOrden:pnlBuscarPaquete" icon="pi pi-search" oncomplete="PF('BuscarPaqueteDialog').show()" />
+							    </h:panelGroup>
+				            		
+			            		<h:panelGroup rendered="#{formOrden.mostrar}">
+				            		<p:dataTable value="#{formOrden.paqueteList}" var="item" rules="all">
+										<p:column headerText="ID"><h:outputText value="#{item.idPaquetes}"/></p:column>
+								        <p:column headerText="Nombre"><h:outputText value="#{item.nombre}" /> </p:column>  
+								        <p:column headerText="Duracción" styleClass="cright"><h:outputText value="#{item.duracion}" /></p:column> 
+								        <p:column headerText="Precio" styleClass="cright"><h:outputText value="#{item.precio}" /></p:column> 
+										<p:column headerText="Quitar" styleClass="centered"><p:graphicImage library="imagenes" name="iconos/delete.png"/></p:column>
+									</p:dataTable>
+								</h:panelGroup>
+							</p:panelGrid>
+				    	</div>
+				    	
+				    	<div class="ui-g-12 ui-md-12 ui-lg-6"> <!-- style="padding: .5em 0 .5em 0" -->
+				    		<!-- Datos de los Técnicos Disponibles -->
+							<p:panelGrid columns="1" style="width:100%; margin-top:20px">
+								<f:facet name="header">  
+							    	Añadir Técnicos Disponibles  
+							    </f:facet>
+					            
+					            <h:panelGroup>
+						            <h:outputLabel value="ID:" />
+						            <p:spacer width="10" />
+				            		<p:inputText id="txtBusTec" value="#{formOrden.busTec}" styleClass="inputresponsive"/>
+				            		<p:spacer width="10" />
+				            		<p:commandButton action="#{formOrden.obtenerTecnico}" update="form" icon="pi pi-plus"/>
+				            		<p:spacer width="2" />
+				            		<p:commandButton action="#{formOrden.buscarTecnico}" update=":frmOrden:pnlBuscarTecnico" icon="pi pi-search" oncomplete="PF('BuscarTecnicoDialog').show()" />
+					            </h:panelGroup>
+					            
+			            		<h:panelGroup rendered="#{formOrden.mostrar}">
+				            		<p:dataTable value="#{formOrden.tecnicoList}" var="item" rules="all">
+										<p:column headerText="ID"><h:outputText value="#{item.idTecnicos}"/></p:column>
+								        <p:column headerText="Nombre"><h:outputText value="#{item.nombre}" /></p:column>  
+								        <p:column headerText="Especialidad" styleClass="centered"><h:outputText value="#{item.tbEspecialidade.descripcion}" /></p:column> 
+								        <p:column headerText="¿Disponible?" styleClass="centered"><h:outputText value="#{item.disponible  == 'S' ? 'Si' : 'No'}" /></p:column> 
+										<p:column headerText="Quitar" styleClass="centered"><p:graphicImage library="imagenes" name="iconos/delete.png"/></p:column>
+									</p:dataTable>
+								</h:panelGroup>
+							</p:panelGrid>
+				    	</div>
+				    </div>
+				    
+					<br/>
+					
+					<p:commandButton value="Salir" action="liquidacion" icon="ui-icon-arrowthick-1-w"/>
+					<p:commandButton value="#{formOrden.orden.idOtrabajo == 0 ? 'Registrar' : 'Actualizar'}" update="form" action="#{formOrden.guardar}" icon="ui-icon-check"/>
+				</p:panel>
+				
+				
+				<!-- Modales -->
+				<p:dialog id="dlgBuscarSolicitud" header="Solicitud de S.S Comercial" widgetVar="BuscarSolicitudDialog" modal="true" 
+					      height="300" resizable="false" closeOnEscape="true" responsive="true" styleClass="modalFormPaquete">
+				  	<p:panelGrid id="pnlBuscarSolicitud" columns="7" columnClasses="ui-g-3 ui-md-2,ui-g-9 ui-md-4,ui-g-3 ui-md-2,ui-g-7 ui-md-3,ui-g-2 ui-md-1,ui-g-12 ui-md-12" 
+				  				 layout="grid" style="width:100%; margin-top:20px">
+						<h:outputLabel value="Representante:" /> 
+			          	<p:inputText id="txtRepresentante" value="#{formOrden.repreSol}"/>
+			          	
+			          	<h:outputLabel value="Estado:" />
+		              	<p:selectOneMenu value="#{formOrden.estSol}">
+			  	  			<f:selectItems value="#{formOrden.estadoList}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.idtbEstado}" />
+					  	</p:selectOneMenu>
+			          	
+			          	<p:commandButton id="cmdBuscarSolicitud" action="#{formOrden.buscarSolicitud}" update="dataTableSolicitud" icon="pi pi-search"/>
+		          	
+		          		<p:separator/>
+		          		
+			    		<p:dataTable id="dataTableSolicitud" value="#{formOrden.solicitudList}" var="item" paginator="true" rows="10" reflow="true">
+							<p:column headerText="Nro. S.S" styleClass="centered"><h:outputText value="#{item.idSolicitud}"/></p:column>
+					        <p:column headerText="Nro. Tarjeta" styleClass="centered"><h:outputText value="#{item.tbEquipo.nrotarjeta}" /></p:column>  
+					        <p:column headerText="Fecha" styleClass="centered">  
+					            <h:outputText value="#{item.fecha}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+					        </p:column>  
+					        <p:column headerText="Representante"><h:outputText value="#{item.representante}" /></p:column> 
+					        <p:column headerText="Estado" styleClass="centered">
+					        	<h:outputText value="#{item.estado == 1 ? 'Espera' : (item.estado == 2 ? 'En Proceso' : 'Finalizado')}" />
+					        </p:column> 
+					        <p:column headerText="Descripción"><h:outputText value="#{item.desProblema.length() gt 30 ? item.desProblema.substring(0,15).concat('...') : item.desProblema}" /></p:column>
+							<p:column headerText="Seleccionar" styleClass="centered">
+								<p:commandLink id="cmdSeleccionarSolicitud" action="#{formOrden.recuperarSolicitud}" update=":frmOrden">
+									<f:param name="codigo" value="#{item.idSolicitud}"/>
+									<i class="pi pi-arrow-right"></i>
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:dialog>
+				
+				<p:dialog id="dlgBuscarPaquete" header="Añadir Paquete" widgetVar="BuscarPaqueteDialog" modal="true" 
+					      height="300" resizable="false" closeOnEscape="true" responsive="true" styleClass="modalFormPaquete">
+					<p:panelGrid id="pnlBuscarPaquete" columns="9" columnClasses="ui-g-3 ui-md-2,ui-g-9 ui-md-4,ui-g-3 ui-md-2,ui-g-9 ui-md-4,
+					ui-g-3 ui-md-2,ui-g-7 ui-md-3,ui-g-2 ui-md-1,ui-g-12 ui-md-12" 
+							     layout="grid" styleClass="ui-fluid" style="width:100%; margin-top:20px;">
+		       			<h:outputLabel value="Nombre:" />
+		            	<p:inputText value="#{formOrden.nomPaq}"/>
+		            
+		            	<h:outputLabel value="Marca:" />
+		            	<p:selectOneMenu id="cboMarca" value="#{formOrden.marPaq}">
+							<f:selectItems value="#{formOrden.marcaList}" var="marca"
+								itemLabel="#{marca.descripcion}" itemValue="#{marca.idMarca}" />
+							<p:ajax listener="#{formOrden.obtenerModelosxMarca}" update="cboModelo" />
+						</p:selectOneMenu>
+					
+						<h:outputLabel value="Modelo:" /> 
+		            	<p:selectOneMenu id="cboModelo" value="#{formOrden.modPaq}">
+							<f:selectItems value="#{formOrden.modeloList}" var="modelo"
+								itemLabel="#{modelo.descripcion}" itemValue="#{modelo.idModelo}" />
+						</p:selectOneMenu>
+				    	
+				    	<p:commandButton id="cmdBuscarPaquete" action="#{formOrden.buscarPaquete}" update="dataTablePaquete" icon="pi pi-search"/>
+						
+						<p:separator/>
+		
+		    			<p:dataTable id="dataTablePaquete" value="#{formOrden.modalPaqueteList}" var="item" paginator="true" rows="5" reflow="true">
+							<p:column headerText="ID" styleClass="centered"><h:outputText value="#{item.idPaquetes}"/></p:column>
+							<p:column headerText="Nombre"><h:outputText value="#{item.nombre}"/></p:column>
+							<p:column headerText="Duración" styleClass="centered"><h:outputText value="#{item.duracion}"/></p:column>
+							<p:column headerText="Precio" styleClass="cright"><h:outputText value="#{item.precio}"/></p:column>
+							<p:column headerText="Marca" styleClass="centered"><h:outputText value="#{item.marca == 1 ? 'Caterpillar' : 'KOMATSU'}"/></p:column>
+							<p:column headerText="Modelo" styleClass="centered"><h:outputText value="#{item.modelo == 1 ? '416E' : (item.modelo == 2 ? '420E/420E IT' : (item.modelo == 3 ? '430E/430E IT' : (item.modelo == 4 ? 'PC01-1' : (item.modelo == 5 ? 'PC18MR-3' : 'PC27MR-3'))))}"/></p:column>
+							<p:column headerText="Seleccionar" styleClass="centered">
+								<p:commandLink id="cmdSeleccioanrPaq" action="#{formOrden.recuperarPaquete}" update=":frmOrden">
+									<f:param name="codigo" value="#{item.idPaquetes}"/>
+									<i class="pi pi-arrow-right"></i>
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:dialog>
+				
+				<p:dialog id="dlgBuscarTecnicos" header="Añadir Técnicos" widgetVar="BuscarTecnicoDialog" modal="true" 
+				          height="300" resizable="false" closeOnEscape="true" responsive="true" styleClass="modalFormPaquete">
+					<p:panelGrid id="pnlBuscarTecnico" columns="7" columnClasses="ui-g-3 ui-md-2,ui-g-9 ui-md-4,ui-g-3 ui-md-2,ui-g-7 ui-md-3,ui-g-2 ui-md-1,ui-g-12 ui-md-12" 
+								 layout="grid" style="width:100%; margin-top:20px">
+								 
+						<h:outputLabel value="Nombre:" />
+			            <p:inputText value="#{formOrden.nomTec}"/>  
+			            
+			            <h:outputLabel value="Especialidad:" />
+		            	<p:selectOneMenu value="#{formOrden.espTec}">
+							<f:selectItems value="#{formOrden.especialidadList}" var="espe"
+								itemLabel="#{espe.descripcion}" itemValue="#{espe.idEspecialidad}" />
+						</p:selectOneMenu>
+			            
+			            <p:commandButton action="#{formOrden.buscarTecnico}" update="dataTableTecnico" icon="pi pi-search"/>
+
+						<p:separator/>
+						
+			    		<p:dataTable id="dataTableTecnico" value="#{formOrden.modalTecnicoList}" var="item" paginator="true" rows="10" reflow="true">
+			    			<p:column headerText="Código"><h:outputText value="#{item.idTecnicos}"/></p:column>
+			    			<p:column headerText="Nombre"><h:outputText value="#{item.nombre}"/></p:column>
+			    			<p:column headerText="Apellido P."><h:outputText value="#{item.apePat}"/></p:column>
+			    			<p:column headerText="Apellido M."><h:outputText value="#{item.apeMat}"/></p:column>
+			    			<p:column headerText="Especialidad"><h:outputText value="#{item.tbEspecialidade.descripcion}"/></p:column>
+			    			<p:column headerText="¿Disponibilidad?" styleClass="centered"><h:outputText value="#{item.disponible == 'S' ? 'Si' : 'No'}"/></p:column>
+			    			<p:column headerText="Seleccionar" styleClass="centered">
+								<p:commandLink action="#{formOrden.recuperarTecnico}" update=":frmOrden">
+									<f:param name="codigo" value="#{item.idTecnicos}"/>
+									<i class="pi pi-arrow-right"></i>
+								</p:commandLink>
+			    			</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:dialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</body>
+</html>

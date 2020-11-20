@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+    		<h:form id="frmCliente" rendered="#{not empty formCliente.clienteList}">
+    			<h2 class="centered">Mantenimiento de Clientes</h2>
+    			
+			    <h:commandLink id="cmdRegistrar" action="#{formCliente.edit}">
+			    	<p:graphicImage library="imagenes" name="iconos/add.png" title="Registrar un nuevo Cliente" width="20"/>
+					<h:outputLabel value="Registrar un nuevo Cliente" />
+				</h:commandLink>
+				
+				<br/><br/>
+				 
+			    <p:dataTable id="dtbCliente" value="#{formCliente.clienteList}" var="item" paginator="true" rows="10" rowKey="#{item.idCliente}"
+			                 selection="#{formCliente.cliente}" selectionMode="single" reflow="true">  
+			        <p:column headerText="Id/Ruc" styleClass="centered">#{item.idCliente}</p:column>  
+			        <p:column headerText="Razón Social">#{item.razonsocial}</p:column>
+			        <p:column headerText="Dirección">#{item.direccion}</p:column>
+			        <p:column headerText="Telefono">#{item.telefono}</p:column>
+					<p:column headerText="Opciones" styleClass="centered">
+						<p:commandLink id="cmdEditar" action="#{formCliente.edit}">
+							<f:param name="codigo" value="#{item.idCliente}"/>
+							<p:graphicImage library="imagenes" name="iconos/table_edit.png" title="Editar" width="20"/>
+						</p:commandLink>
+						<p:commandLink id="cmdEliminar" action="#{formCliente.eliminar}" update=":frmCliente">
+							<f:param name="codigo" value="#{item.idCliente}"/>
+							<p:graphicImage library="imagenes" name="iconos/table_delete.png" title="Eliminar" width="20"/>
+							<p:confirm header="Confirmación" message="¿Estás seguro?" icon="pi pi-exclamation-triangle" />
+						</p:commandLink>
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+					    </p:confirmDialog> 
+					</p:column> 
+					
+					<p:ajax event="rowSelect" listener="#{formCliente.onRowSelect}"   
+                    	update=":frmCliente:pnlDetalle :frmCliente:growlCliente" oncomplete="PF('clienteDialog').show()" />  
+        			<p:ajax event="rowUnselect" listener="#{formCliente.onRowUnselect}" 
+        				update=":frmCliente:growlCliente"/>  
+			    </p:dataTable>
+			    
+			    <p:growl id="growlCliente" showDetail="true"/> 
+			    
+		        <p:dialog id="dlgCliente" header="Cliente Detalle" widgetVar="clienteDialog" resizable="false" showEffect="fade" hideEffect="explode">
+			        <h:panelGrid id="pnlDetalle" columns="2" cellpadding="4">
+			            <f:facet name="header">
+			                <p:graphicImage library="imagenes" name="iconos/solicitud.png"/>
+			            </f:facet>
+			
+			            <h:outputLabel value="Id/Ruc:" styleClass="outputlabel"/>
+			            <h:outputText value="#{formCliente.cliente.idCliente}" />
+			            
+			            <h:outputLabel value="Razón Social:" styleClass="outputlabel"/>
+			            <h:outputText value="#{formCliente.cliente.razonsocial}" />
+			            
+			            <h:outputLabel value="Dirección:" styleClass="outputlabel"/>
+			            <h:outputText value="#{formCliente.cliente.direccion}" />
+			            
+			            <h:outputLabel value="Teléfono:" styleClass="outputlabel"/>
+			            <h:outputText value="#{formCliente.cliente.telefono}" />
+			        </h:panelGrid>
+			    </p:dialog> 
+	        </h:form>   
+			<h:panelGroup rendered="#{empty formCliente.clienteList}">
+				<p>¡La Tabla está vacía! Por favor agregar nuevos Clientes.</p>
+			</h:panelGroup>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

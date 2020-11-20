@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<head>
+	<title>Mantenimiento de Usuario</title>
+</head>
+<body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+			<h:form id="formulario">
+				<p:panel id="panel" header="Mantenimiento de Usuario">
+					<p:messages id="msgs" closable="true"/>
+					
+					<div class="ui-fluid">  					
+						<p:panelGrid id="grid1" columns="2" columnClasses="ui-g-12 ui-md-4,ui-g-12 ui-md-8" layout="grid" 
+									styleClass="ui-panelgrid-blank ui-fluid" style="width:100%; margin-top:20px">
+						    <c:if test="#{formUsuario.usuario.idUsuario != 0}">
+					            <h:outputLabel value="Código:" for="lblUsu" styleClass="outputlabel"/>
+					            <h:outputText id="lblUsu" value="#{formUsuario.usuario.idUsuario}" />
+	
+					            <h:outputLabel value="Estado:" for="lblEstado" styleClass="outputlabel"/>
+				            	<h:outputText id="lblEstado" value="#{formUsuario.usuario.estado == 0 ? 'Activo' : 'Desactivado'}"/>
+						    </c:if>
+						    
+				            <h:outputLabel value="Nombre:" for="txtNombre" styleClass="outputlabel"/> 
+			            	<p:inputText id="txtNombre" value="#{formUsuario.usuario.nombre}" required="true" label="Nombre"/>
+				            
+				            <h:outputLabel value="Apellido Paterno:" for="txtApePat" styleClass="outputlabel"/>
+				            <p:inputText id="txtApePat" value="#{formUsuario.usuario.apePat}" required="true" label="Apellido Paterno"/> 
+				            
+				            <h:outputLabel value="Apellido Materno:" for="txtApeMat" styleClass="outputlabel"/> 
+				            <p:inputText id="txtApeMat" value="#{formUsuario.usuario.apeMat}" required="true" label="Apellido Materno"/> 
+				            
+				            <h:outputLabel value="Fecha de Ingreso:" for="txtFecIng" styleClass="outputlabel"/> 
+				            <p:calendar id="txtFecIng" value="#{formUsuario.usuario.fechaIngreso}" pattern="dd/MM/yyyy" showOn="button"/> 
+				            
+				            <h:outputLabel value="Nombre de Usuario:" for="txtUsuario" styleClass="outputlabel"/> 
+				            <p:inputText id="txtUsuario" value="#{formUsuario.usuario.login}" required="true" label="Nombre de Usuario"/> 
+				            
+				            <h:outputLabel value="Contraseña:" for="txtPassword"  styleClass="outputlabel"/> 
+				            <p:inputText id="txtPassword" value="#{formUsuario.usuario.password}" required="true" label="Contraseña"/>
+				            
+				            <h:outputLabel value="Area:" for="cboArea"  styleClass="outputlabel"/> 
+				            <p:selectOneMenu id="cboArea" value="#{formUsuario.usuario.tbAreaIdArea}" size="1" >
+								<f:selectItems value="#{formUsuario.areaList}" var="area"
+									itemLabel="#{area.descripcion}" itemValue="#{area.idArea}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						
+						<p:spacer/>
+						
+			            <p:commandButton value="#{formUsuario.usuario.idUsuario == 0 ? 'Registrar Usuario' : 'Actualizar Usuario'}" update="panel" action="#{formUsuario.registrarOrActualizar}" icon="pi pi-save" />
+						<p:button value="Volver" outcome="usuario" icon="pi pi-arrow-left" />
+					</div>
+				</p:panel>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</body>
+</html>

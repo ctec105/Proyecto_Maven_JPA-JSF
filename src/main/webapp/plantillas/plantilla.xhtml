@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<h:outputStylesheet library="css" name="default.css"/>
+	<h:outputStylesheet library="primefaces" name="grid/grid.css" />
+	<h:outputStylesheet library="primefaces" name="primeicons/primeicons.css"/>
+</h:head>
+<h:body>
+	<style type="text/css">
+		@media screen and (max-width: 40.063em){
+			body {
+				font-size: 10px;
+			}
+/* 			.modalResponsivo { */
+/* 				width: 300px !important; */
+/* 			} */
+			.inputresponsive {
+				width: 150px !important;
+			}
+			.progressresponsive{
+				width: 100px;
+    			display: inline-block;
+			}
+		}
+		
+		@media screen and (min-width: 40.063em){
+			body {
+				font-size: 11px;
+			}
+			.modalResponsivo {
+				width: 660px !important;
+			}
+		}
+		
+		@media screen and (min-width: 64.063em){
+			body {
+				font-size: 12px;
+			}
+			.modalResponsivo {
+				width: 700px !important;
+			}
+			.modalSS {
+				width: 700px !important;
+			}
+			.modalFormPaquete {
+				width: 900px !important;
+			}
+			.modalMonitor {
+				width: 400px !important;
+			}
+		}
+		
+		
+					
+
+		@media screen and (min-width : 640px) {
+		    .verticalmenu {
+		        display: none !important;
+		    }
+		}
+		@media screen and (max-width : 640px) {
+		    .horizontalmenu {
+		        display: none !important;
+		    }
+		    
+		}
+	</style>
+	
+	
+	
+	<!-- Session TimeOut  
+		 El componente p:idleMonitor está configuración con el session timeout establecido 
+		 en la aplicación y, al transcurrir dicho tiempo mostrará una ventana modal con el 
+		 evento onactive. Este este caso, ya no es necesario llamar a un método mediante AJAX 
+		 para terminar la sesión y redireccionar a Login porque el tiempo configurado es el mismo
+	-->
+	<p:idleMonitor onactive="PF('sessionTimeOutDialog').show()" timeout="#{session.maxInactiveInterval * 1000}" />
+	<p:dialog header="Sesión Caducada" widgetVar="sessionTimeOutDialog" 
+	 modal="true" fixedCenter="true" closable="false" visible="false" resizable="false" responsive="true" styleClass="modalMonitor">
+		<h:outputText value="La sesión ha caducado, por favor, pulse sobre el siguiente motor para volver a acceder a la aplicación" />
+     	<input id="confirmBackToLogin" type="button" value="Volver a acceder a la aplicación"
+        onclick="window.location='#{facesContext.externalContext.requestContextPath}/faces/login.xhtml';" />
+	</p:dialog>
+	
+	<div class="ui-g">
+		<div class="ui-g-12 ui-widget ui-widget-header">
+			<ui:insert name="header">
+				<ui:include src="/secciones/cabecera.xhtml" />
+			</ui:insert>
+		</div>
+		
+		<div class="ui-g-12 ui-md-4 ui-lg-3">
+			<ui:insert name="menu">
+				<ui:include src="/secciones/menu.xhtml" />
+				<ui:include src="/secciones/menuHorizontal.xhtml" />
+			</ui:insert>
+		</div>	
+		
+		<div class="ui-g-12 ui-md-8 ui-lg-9">
+			<div class="ui-g-12 ui-g-nopad">
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-12">
+						<ui:insert name="body"></ui:insert>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="footer" class="ui-g-12 ui-widget ui-widget-header">
+			<ui:insert name="footer">
+				<ui:include src="/secciones/pie.xhtml" />
+			</ui:insert>
+		</div>
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<head>
+	<title>Permisos</title>
+</head>
+<body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+			<h:form id="formulario">
+				<p:panel id="panel" header="Gestionar Permisos de la Areas Usuarias">
+					<p:growl id="growl" showDetail="true" skipDetailIfEqualsSummary="true"/> 
+					
+					<p:panelGrid id="grid1" columns="1" styleClass="centered"
+							     style="width:100%; margin-top:10px">
+			           	<f:facet name="header">
+			           		<h:outputLabel value="Buscar Permisos" />
+						</f:facet>
+		            	<h:panelGroup>
+		            		<h:outputLabel value="Area:" />
+		            		<p:spacer width="10"/>
+		            		<p:selectOneMenu id="areaper" value="#{formPermiso.area.idArea}" size="1" >
+								<f:selectItems value="#{formPermiso.areaList}" var="areap"
+									itemLabel="#{areap.descripcion}" itemValue="#{areap.idArea}" />
+							</p:selectOneMenu>
+							<p:spacer width="10"/>
+				            <p:commandButton update="panel" action="#{formPermiso.obtenerPermisos}" icon="ui-icon-search"/>
+		            	</h:panelGroup>
+					</p:panelGrid>
+					
+					<p:spacer height="10"/>
+					
+	        		<p:dataTable id="multiPermisos" var="item" value="#{formPermiso.mediumPermisosModel}" 
+            			selection="#{formPermiso.selectedPermisos}" rendered="#{formPermiso.mostrar}">  
+						<f:facet name="header">
+							Permisos Asignados: 
+							<h:panelGroup rendered="#{formPermiso.area.idArea == 1}">Liquidación </h:panelGroup>
+							<h:panelGroup test="#{formPermiso.area.idArea == 2}">| Comercial </h:panelGroup>
+							<h:panelGroup test="#{formPermiso.area.idArea == 3}">| Post-Ventas </h:panelGroup>
+							<h:panelGroup test="#{formPermiso.area.idArea == 4}">| Sistemas</h:panelGroup>
+						</f:facet>
+						<p:column headerText="Id" styleClass="centered"><h:outputText value="#{item.tbMenu.idMenu}"/></p:column>
+				        <p:column headerText="Título">
+					        <h:panelGroup rendered="#{item.tbMenu.nivel.length() == 1}">
+					        	<h:outputText value="#{item.tbMenu.titulo}" styleClass="ui-widget ui-panelmenu-header ui-state-default ui-state-active ui-corner-top" />
+					        </h:panelGroup>
+					        <h:panelGroup rendered="#{item.tbMenu.nivel.length() > 1}">
+					        	<h:outputText value="#{item.tbMenu.titulo}" />
+					        </h:panelGroup>
+				        </p:column> 
+						<p:column headerText="¿Permitido?" styleClass="centered">
+							<h:panelGroup rendered="#{item.ver == 'S'}">
+								<i class="pi pi-check"></i>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{item.ver == 'N'}">
+								<i class="pi pi-times"></i>
+							</h:panelGroup>
+						</p:column>
+						<p:column selectionMode="multiple" checked="true" styleClass="centered"/>  
+						<f:facet name="footer">
+							<p:commandButton value="Actualizar Permisos" update=":formulario:displayMulti" oncomplete="PF('multiOrdenDialog').show()" icon="ui-icon-check"/>
+						</f:facet>
+					</p:dataTable>
+
+					<p:dialog id="multiDialog" header="Permisos Seleccionados" widgetVar="multiOrdenDialog" resizable="false"
+							  height="300" showEffect="fade" hideEffect="explode" closeOnEscape="true" styleClass="modalResponsivo" responsive="true"> 
+		            	<p:dataTable id="displayMulti" value="#{formPermiso.selectedPermisos}" var="item">
+							<p:column headerText="Id" styleClass="centered"><h:outputText value="#{item.tbMenu.idMenu}"/></p:column>
+					        <p:column headerText="Titulo">
+					        	<h:panelGroup rendered="#{item.tbMenu.nivel.length() == 1}">
+						        	<h:outputText value="#{item.tbMenu.titulo}" styleClass="ui-widget ui-panelmenu-header ui-state-default ui-state-active ui-corner-top" />
+						        </h:panelGroup>
+						        <h:panelGroup rendered="#{item.tbMenu.nivel.length() > 1}">
+						        	<h:outputText value="#{item.tbMenu.titulo}" />
+						        </h:panelGroup>
+					        </p:column>
+							<p:column headerText="¿Permitido?" styleClass="centered" >
+								<h:panelGroup rendered="#{item.ver == 'S'}">
+									<i class="pi pi-check"></i>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{item.ver == 'N'}">
+									<i class="pi pi-times"></i>
+								</h:panelGroup>
+							</p:column>
+							<f:facet name="footer">
+								<p:commandButton value="Confirmar" update=":formulario" action="#{formPermiso.modificarPermisos}" icon="ui-icon-check" style="float:center"/>
+							</f:facet>
+						</p:dataTable>
+	              	</p:dialog>
+				</p:panel>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</body>
+</html>

@@ -1,0 +1,64 @@
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	version="4.0">
+
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- Página de bienvenida -->
+	<welcome-file-list>
+		<welcome-file>faces/login.xhtml</welcome-file>
+	</welcome-file-list>
+
+	<!-- Etapa del proyecto -->
+	<context-param>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Production</param-value> <!-- Development / Production -->
+	</context-param>
+
+	<!-- State Saving Method -->
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value> <!-- client -->
+	</context-param>
+
+	<!-- Las páginas en Facelets deben tener extensión .xhtml -->
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+
+	<!-- Para que JSF no considere los comentarios como contenido -->
+	<context-param>
+		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<!-- Faces Controller -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Tipo de páginas que vamos a deployar -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/faces/*</url-pattern>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+
+	<!-- Primefaces Theme -->
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>#{cambiadorTemas.tema}</param-value>
+	</context-param>
+
+	<!-- Tiempo de la sesión -->
+	<session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
+	<!-- <error-page> <exception-type>javax.faces.application.ViewExpiredException</exception-type> 
+		<location>/faces/errorpages/expired.xhtml</location> </error-page> -->
+</web-app>

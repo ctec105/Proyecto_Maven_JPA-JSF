@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Orden de Liquidación</title>
+</h:head>
+<h:body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+    		<h:form id="form" rendered="#{not empty formLiquidacion.liquidacionList}">
+				<h1 class="centered ui-widget">Orden de Liquidación</h1>
+				
+				<h:commandLink action="#{formLiquidacion.editar}" styleClass="ui-widget">
+			    	<p:graphicImage library="imagenes" name="iconos/add.png" title="Registrar nueva Orden de Liquidación" width="20"/>
+			    	<f:param name="login" value="#{login.usuario.login}" />
+			    	<f:param name="usuario" value="#{login.usuario.nombre} #{login.usuario.apePat} #{login.usuario.apeMat}" />
+					<h:outputLabel value="Registrar nueva Orden de Liquidación" />
+				</h:commandLink>
+				 
+				<br/><br/>
+				
+			    <p:dataTable value="#{formLiquidacion.liquidacionList}" var="item"  id="bean" paginator="true" rows="10" rowKey="#{item.idLiquidacion}"  
+			                 selection="#{formLiquidacion.liquidacion}" selectionMode="single" reflow="true">  
+			        <p:column headerText="Nro. Liq" styleClass="centered">#{item.idLiquidacion}</p:column>  
+			        <p:column headerText="Fecha" styleClass="centered">
+			        	<h:outputText value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+			        </p:column> 
+					<p:column headerText="Nombre">#{item.nombre}</p:column> 
+			        <p:column headerText="Ruc Cliente" styleClass="centered">#{item.idCliente}</p:column> 
+			        <p:column headerText="Estado" styleClass="#{item.estado == 0 ? 'red' : null} centered">
+		        		<h:outputText value="#{item.estado == 0 ? 'Liquidar' : 'Pre-Fatura'}"/>
+			        </p:column>
+			        <p:column headerText="Usuario" styleClass="centered">#{item.usuario}</p:column> 
+					<p:column headerText="Opciones" styleClass="centered">
+						<h:commandLink action="#{formLiquidacion.editar}">
+							<f:param name="codigo" value="#{item.idLiquidacion}"/>
+							<p:graphicImage library="imagenes" name="iconos/detail.png" title="Detalle" width="20"/>
+						</h:commandLink>
+						<h:panelGroup rendered="#{item.estado == 0}">
+							<p:commandLink action="#{formLiquidacion.eliminar}" disabled="true">
+								<f:param name="codigo" value="#{item.idLiquidacion}"/>
+								<p:graphicImage library="imagenes" name="iconos/table_delete.png" title="Eliminar" width="20"/>
+								<p:confirm header="Confirmación" message="¿Estás seguro?" icon="pi pi-exclamation-triangle" />
+							</p:commandLink>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+						        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+						    </p:confirmDialog> 
+						</h:panelGroup>
+					</p:column>
+					
+				 	<p:ajax event="rowSelect" listener="#{formLiquidacion.onRowSelect}"   
+                    	update=":form:display :form:growl" oncomplete="PF('liquidacionDialog').show()" />  
+        			<p:ajax event="rowUnselect" listener="#{formLiquidacion.onRowUnselect}" update=":form:growl"/>  
+			    </p:dataTable>  
+			    
+			    <p:growl id="growl" showDetail="true"/> 
+			    
+		        <p:dialog id="dialog" header="Detalle Liquidación" widgetVar="liquidacionDialog" resizable="false" 
+		        		  showEffect="fade" hideEffect="explode" closeOnEscape="true" responsive="true">
+			        <h:panelGrid id="display" columns="2" cellpadding="4">
+			            <f:facet name="header">
+			                <p:graphicImage library="imagenes" name="iconos/solicitud.png"/>
+			            </f:facet>
+			
+			            <h:outputLabel value="Nro. Liq:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.idLiquidacion}" />
+			            
+			            <h:outputLabel value="Fecha:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.fecha}">
+			            	<f:convertDateTime pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			            
+			            <h:outputLabel value="Nombre:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.nombre}" />
+			            
+			            <h:outputLabel value="Ruc Cliente:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.idCliente}" />
+			            
+			            <h:outputLabel value="Estado:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.estado == 0 ? 'A Facturar' : 'Facturado'}" />
+			            
+			            <h:outputLabel value="Usuario:" />
+			            <h:outputText value="#{formLiquidacion.liquidacion.usuario}" />
+			        </h:panelGrid>
+			    </p:dialog> 
+	        </h:form>   
+			<h:panelGroup rendered="#{empty formLiquidacion.liquidacionList}">
+				<p>¡La Tabla está vacía! Por favor agregar nuevas Ordenes de Liquidación.</p>
+			</h:panelGroup>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

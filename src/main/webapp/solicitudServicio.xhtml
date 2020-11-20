@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Solicitud de Servicio</title>
+</h:head>
+<h:body>
+	<ui:composition template="/plantillas/plantilla.xhtml">
+		<ui:define name="body">
+    		<h:form id="frmServicio" rendered="#{not empty solicitud.solicitudList}">
+				<h1 class="centered ui-widget">Solicitud de Servicio</h1>
+				
+				<h:commandLink id="cmdRegistrar" action="#{solicitud.edit}" styleClass="ui-widget"> 
+		    		<p:graphicImage library="imagenes" name="iconos/add.png" title="Registrar nueva Solicitud de Servicio" width="20"/>
+		    		<f:param name="login" value="#{login.usuario.login}" />
+		    		<h:outputText value="Registrar nueva Solicitud de Servicio" /> 
+		    	</h:commandLink>
+		    	
+		    	<br/><br/>
+				 
+			    <p:dataTable id="dtbServicios" value="#{solicitud.solicitudList}" var="item" paginator="true" rows="10" rowKey="#{item.idSolicitud}"   
+			                 selection="#{solicitud.item}" selectionMode="single" reflow="true">  
+			        <p:column headerText="Nro. S.S." styleClass="centered">#{item.idSolicitud}</p:column>  
+			        <!-- <p:column headerText="Nro. de Tarjeta">#{item.tbEquipo.nrotarjeta}</p:column> --> 
+			        <p:column headerText="Fecha" styleClass="centered">
+			        	<h:outputText value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+			        </p:column> 
+			        <p:column headerText="Representante">#{item.representante}</p:column> 
+			        <p:column headerText="Estado">
+			        	<h:panelGroup rendered="#{item.estado == '1'}">
+			        		<!-- <h:outputText value="En Espera" style="color:blue"/> -->
+			        		<p:progressBar value="0" labelTemplate="En Espera" displayOnly="true"  styleClass="progressresponsive" />
+			        	</h:panelGroup>
+			        	<h:panelGroup rendered="#{item.estado == '2'}">
+			        		<!-- <h:outputText value="En Proceso" style="color:green"/> -->
+			        		<p:progressBar value="50" labelTemplate="En Proceso" displayOnly="true" styleClass="progressresponsive" />
+			        	</h:panelGroup>
+			        	<h:panelGroup rendered="#{item.estado == '3'}">
+			        		<!-- <h:outputText value="Finalizado" style="color:red"/> -->
+			        		<p:progressBar value="100" labelTemplate="Finalizado" displayOnly="true" styleClass="progressresponsive" />
+			        	</h:panelGroup>
+			        </p:column> 
+			        <p:column headerText="Descripción">
+			        	<h:outputText value="#{item.desProblema.length() gt 30 ? item.desProblema.substring(0,15).concat('...') : item.desProblema}" />
+			        </p:column> 
+					<p:column headerText="Opciones" styleClass="centered">
+						<h:commandLink id="cmdEditar" action="#{solicitud.edit}">
+							<f:param name="codigo" value="#{item.idSolicitud}"/>
+							<p:graphicImage library="imagenes" name="iconos/table_edit.png" title="Editar" width="20"/>
+						</h:commandLink>
+						<h:panelGroup rendered="#{item.estado == 1}">
+							<p:commandLink id="cmdEliminar" class="add" action="#{solicitud.eliminar}">
+								<f:param name="codigo" value="#{item.idSolicitud}"/>
+								<p:graphicImage library="imagenes" name="iconos/table_delete.png" title="Eliminar" width="20"/>
+								<p:confirm header="Confirmación" message="¿Estás seguro?" icon="pi pi-exclamation-triangle" />
+							</p:commandLink>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+						        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+						    </p:confirmDialog> 
+						</h:panelGroup>
+					</p:column>
+					
+					<p:ajax event="rowSelect" listener="#{solicitud.onRowSelect}" update=":frmServicio:pnlDetalle :frmServicio:growlMensaje" oncomplete="PF('detalleDialog').show()" />  
+        			<p:ajax event="rowUnselect" listener="#{solicitud.onRowUnselect}" update=":frmServicio:growlMensaje"/> 
+			    </p:dataTable>  
+			    
+			    <p:growl id="growlMensaje" showDetail="true"/>
+			    
+		        <p:dialog id="dlgDetalle" header="Detalle Solicitud" widgetVar="detalleDialog" resizable="false" 
+		        		  showEffect="fade" hideEffect="explode" closeOnEscape="true" responsive="true">
+			        <h:panelGrid id="pnlDetalle" columns="2" cellpadding="4" width="250px">
+			            <f:facet name="header">
+			                <p:graphicImage library="imagenes" name="iconos/solicitud.png"/>
+			            </f:facet>
+			
+			            <h:outputText value="Nro. Solicitud:" />
+			            <h:outputText value="#{solicitud.item.idSolicitud}" />
+			            
+						<h:outputText value="Nro. Tarjeta:" />
+			            <h:outputText value="#{solicitud.item.tbEquipo.nrotarjeta}" />
+			            
+			            <h:outputText value="Fecha:" />
+			            <h:outputText value="#{solicitud.item.fecha}">
+			            	<f:convertDateTime pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			            
+			            <h:outputText value="Representante:" />
+			            <h:outputText value="#{solicitud.item.representante}" />
+			            
+			            <h:outputText value="Estado:" />
+			            <h:outputText value="En Espera" rendered="#{solicitud.item.estado == 1}" />
+			            <h:outputText value="En Proceso" rendered="#{solicitud.item.estado == 2}"/>
+			            <h:outputText value="Finalizada" rendered="#{solicitud.item.estado == 3}" />
+			            
+			            <h:outputText value="Descripción:" />
+			            <h:outputText value="#{solicitud.item.desProblema}" />
+			        </h:panelGrid>
+			    </p:dialog> 
+	        </h:form>   
+			<h:panelGroup rendered="#{empty solicitud.solicitudList}">
+				<p>¡La Tabla está vacía! Por favor agregar nuevas Solicitudes de Servicio.</p>
+			</h:panelGroup>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
